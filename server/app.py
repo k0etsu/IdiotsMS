@@ -146,7 +146,7 @@ class ChangePasswordSchema(Schema):
     confirmNewPassword = fields.Str(required=True)
 
     @validates('newPassword')
-    def validate_newPassword(self, value, data, **kwargs):
+    def validate_newPassword(self, value, data):
         if value != data.get('confirmNewPassword'):
             raise ValidationError('New password confirmation does not match')
 
