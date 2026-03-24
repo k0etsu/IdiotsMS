@@ -346,8 +346,7 @@ def get_profile():
 @limiter.limit("3/minute")  # Very strict limit for password changes
 def change_password():
     try:
-        current_user = get_jwt_identity()
-        user_id = current_user['id']
+        user_id = get_jwt_identity()
 
         # Validate input
         schema = ChangePasswordSchema(context=request.json)
