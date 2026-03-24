@@ -1,8 +1,7 @@
 -- IdiotsMS Account Management Database Schema
 
--- Create database
-CREATE DATABASE IF NOT EXISTS idiotsms_accounts CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE idiotsms_accounts;
+-- Use database
+USE cosmic;
 
 -- Accounts table
 CREATE TABLE IF NOT EXISTS accounts (
