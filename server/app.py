@@ -34,8 +34,9 @@ app.config['RATELIMIT_STORAGE_URL'] = 'memory://'
 # Initialize extensions
 # Simple CORS configuration for development
 if os.getenv('NODE_ENV') == 'development':
+    # In development, allow localhost and production domain for testing
     CORS(app,
-         origins=["*"],
+         origins=["*", "https://maplestory.yamanote.co"],
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization"],
          methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
