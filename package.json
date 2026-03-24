@@ -1,0 +1,24 @@
+{
+  "name": "idiotsms-account-system",
+  "version": "1.0.0",
+  "description": "IdiotsMS Server Account Management System",
+  "main": "server/app.py",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && uv run run.py",
+    "server-prod": "cd server && uv run app.py",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "start": "npm run server-prod",
+    "install-deps": "cd server && uv sync && cd ../client && npm install",
+    "install-python": "cd server && uv sync",
+    "install-client": "cd client && npm install"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["idiotsms", "account", "vue", "mysql"],
+  "author": "",
+  "license": "MIT"
+}
