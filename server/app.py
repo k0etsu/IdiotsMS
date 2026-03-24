@@ -132,8 +132,8 @@ class RegistrationSchema(Schema):
             raise ValidationError('Username can only contain letters, numbers, and underscores')
 
     @validates('confirm_password')
-    def validate_confirm_password(self, value):
-        if value != self.context.get('password'):
+    def validate_confirm_password(self, value, data):
+        if value != data.get('password'):
             raise ValidationError('Password confirmation does not match')
 
 class LoginSchema(Schema):
@@ -144,12 +144,6 @@ class ChangePasswordSchema(Schema):
     currentPassword = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     newPassword = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     confirmNewPassword = fields.Str(required=True)
-
-    @validates_schema
-    def validate_schema(self, data, **kwargs):
-        if data.get('newPassword') != data.get('confirmNewPassword'):
-            raise ValidationError('New password confirmation does not match', field_name='confirmNewPassword')
-        return data
 
 # Validation helpers
 def validate_username(username):
@@ -355,11 +349,18 @@ def change_password():
 
         current_password = data['currentPassword']
         new_password = data['newPassword']
+        confirm_password = data['confirmNewPassword']
 
         # Additional validation for new password
         if not validate_password(new_password):
             return jsonify({
-                'error': 'New password must be 5-12 characters with at least one uppercase letter, one lowercase letter, and one number'
+                'error': 'New password must be 5-12 characters'
+            }), 400
+
+        # Check if passwords match
+        if new_password != confirm_password:
+            return jsonify({
+                'error': 'New password confirmation does not match'
             }), 400
 
         conn = get_db_connection()
