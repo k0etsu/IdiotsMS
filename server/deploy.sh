@@ -30,6 +30,10 @@ cp -r ./* $APP_DIR/
 
 # Create UV virtual environment
 echo "🐍 Creating UV virtual environment..."
+if ! command -v uv &> /dev/null; then
+    echo "uv is not installed. Installing..."
+    sudo pip install uv
+fi
 echo "Using uv for virtual environment management..."
 cd $APP_DIR/server
 uv venv
