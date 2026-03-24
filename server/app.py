@@ -32,20 +32,49 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=int(os.getenv('JWT_EXPIR
 app.config['RATELIMIT_STORAGE_URL'] = 'memory://'
 
 # Initialize extensions
-# Simple CORS configuration for development
+# Manual CORS handling for maximum compatibility
 if os.getenv('NODE_ENV') == 'development':
-    # In development, allow localhost and production domain for testing
+    # In development, allow all origins with explicit CORS middleware
     CORS(app,
          origins=["*", "https://maplestory.yamanote.co"],
          supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         max_age=600)
 else:
     CORS(app,
          origins=["https://maplestory.yamanote.co"],
          supports_credentials=True,
-         allow_headers=["Content-Type", "Authorization"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+         allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+         max_age=600)
+
+# Additional CORS middleware as backup
+@app.before_request
+def before_request():
+    if request.method == 'OPTIONS':
+        # Handle preflight requests manually
+        response = app.make_default_options_response()
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Max-Age', '600')
+        return response
+
+@app.after_request
+def after_request(response):
+    # Ensure CORS headers are present on all responses
+    origin = request.headers.get('Origin')
+    if origin:
+        response.headers.add('Access-Control-Allow-Origin', origin)
+    else:
+        response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Max-Age', '600')
+    return response
 
 jwt_manager = JWTManager(app)
 
