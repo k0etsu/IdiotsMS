@@ -12,7 +12,8 @@
     "start": "npm run server-prod",
     "install-deps": "cd server && uv sync && cd ../client && npm install",
     "install-python": "cd server && uv sync",
-    "install-client": "cd client && npm install"
+    "install-client": "cd client && npm install",
+    "setup-env": "cp .env.example .env && cp client/.env.example client/.env"
   },
   "dependencies": {},
   "devDependencies": {

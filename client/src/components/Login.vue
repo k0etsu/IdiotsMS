@@ -87,8 +87,8 @@ export default {
         return false
       }
 
-      if (username.length < 3 || username.length > 12) {
-        errors.value.username = 'Username must be 3-12 characters'
+      if (username.length < 4 || username.length > 12) {
+        errors.value.username = 'Username must be 4-12 characters'
         return false
       }
 
@@ -109,8 +109,8 @@ export default {
         return false
       }
 
-      if (password.length < 8 || password.length > 12) {
-        errors.value.password = 'Password must be 8-12 characters'
+      if (password.length < 5 || password.length > 12) {
+        errors.value.password = 'Password must be 5-12 characters'
         return false
       }
 

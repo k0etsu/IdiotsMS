@@ -44,20 +44,73 @@ mysql -u root -p < database.sql
 
 ### 3. Environment Configuration
 
-Copy the environment file and update the settings:
+#### Quick Setup (Recommended)
+
+Run the setup script to create both environment files:
+
+```bash
+npm run setup-env
+```
+
+Then edit both `.env` files with your configuration.
+
+#### Manual Setup
+
+**Backend (.env)**
+
+Copy `.env.example` to `.env` in the root directory:
 
 ```bash
 cp .env.example .env
 ```
 
-Update `.env` with your database credentials:
+Update `.env` with your database configuration:
 
-```env
+```bash
+# Database Configuration
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_NAME=maplestory_accounts
+DB_PASSWORD=your_password
+DB_NAME=idiotsms_accounts
+
+# JWT Configuration
 JWT_SECRET=your_super_secret_jwt_key_here_make_it_long_and_random
+JWT_EXPIRES_IN_DAYS=7
+
+# Server Configuration
+PORT=3000
+NODE_ENV=development
+
+# Rate Limiting
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+```
+
+**Frontend (.env)**
+
+Copy `.env.example` to `.env` in the client directory:
+
+```bash
+cp client/.env.example client/.env
+```
+
+**Important:** The frontend environment variables must match the server configuration from the root `.env` file. Make sure the `VITE_PORT` and `VITE_API_BASE_URL` use the same port as the server's `PORT`.
+
+Update `client/.env` to match your server configuration:
+
+```bash
+# API Configuration - must match server PORT from root .env
+VITE_API_BASE_URL=http://localhost:3000/api
+VITE_PORT=3000
+
+# Development settings
+VITE_NODE_ENV=development
+```
+
+**Example:** If your server `.env` has `PORT=8080`, then your client `.env` should have:
+```bash
+VITE_API_BASE_URL=http://localhost:8080/api
+VITE_PORT=8080
 ```
 
 ### 4. Install Dependencies

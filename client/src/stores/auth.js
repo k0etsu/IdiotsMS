@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:3000/api'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `http://localhost:${import.meta.env.VITE_PORT || 3000}/api`
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', {
     async register(userData) {
       this.loading = true
       this.error = null
-      
+
       try {
         const response = await axios.post(`${API_BASE_URL}/register`, userData)
         this.token = response.data.token
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
     async login(credentials) {
       this.loading = true
       this.error = null
-      
+
       try {
         const response = await axios.post(`${API_BASE_URL}/login`, credentials)
         this.token = response.data.token
@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', {
     async changePassword(passwordData) {
       this.loading = true
       this.error = null
-      
+
       try {
         const response = await axios.post(`${API_BASE_URL}/change-password`, passwordData, {
           headers: {
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore('auth', {
     async fetchProfile() {
       this.loading = true
       this.error = null
-      
+
       try {
         const response = await axios.get(`${API_BASE_URL}/profile`, {
           headers: {
