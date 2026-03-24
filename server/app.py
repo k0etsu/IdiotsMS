@@ -145,10 +145,11 @@ class ChangePasswordSchema(Schema):
     newPassword = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     confirmNewPassword = fields.Str(required=True)
 
-    @validates('newPassword')
-    def validate_newPassword(self, value, data):
-        if value != data.get('confirmNewPassword'):
-            raise ValidationError('New password confirmation does not match')
+    @validates_schema
+    def validate_schema(self, data, **kwargs):
+        if data.get('newPassword') != data.get('confirmNewPassword'):
+            raise ValidationError('New password confirmation does not match', field_name='confirmNewPassword')
+        return data
 
 # Validation helpers
 def validate_username(username):
