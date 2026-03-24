@@ -84,6 +84,15 @@ limiter = Limiter(
     default_limits=[f"{os.getenv('RATE_LIMIT_MAX_REQUESTS', '100')}/{int(os.getenv('RATE_LIMIT_WINDOW_MS', '900000'))//1000} seconds"]
 )
 
+# Request logging middleware
+@app.before_request
+def log_request():
+    print(f"Request: {request.method} {request.url}")
+    print(f"Headers: {dict(request.headers)}")
+    if request.method == 'OPTIONS':
+        print(f"OPTIONS request detected")
+    return None
+
 # Database connection
 def get_db_connection():
     return pymysql.connect(
@@ -309,6 +318,18 @@ def get_profile():
     except Exception as e:
         print(f"Profile error: {e}")
         return jsonify({'error': 'Internal server error'}), 500
+
+# Debug route to catch all requests
+@app.route('/api/debug', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def debug_request():
+    print(f"Debug - Method: {request.method}")
+    print(f"Debug - Headers: {dict(request.headers)}")
+    print(f"Debug - URL: {request.url}")
+    return jsonify({
+        'method': request.method,
+        'headers': dict(request.headers),
+        'url': request.url
+    })
 
 @app.route('/api/change-password', methods=['POST'])
 @jwt_required()
