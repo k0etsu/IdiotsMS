@@ -23,28 +23,25 @@ fi
 # Create application directory
 echo "📁 Creating application directory..."
 mkdir -p $APP_DIR
-cd $APP_DIR
 
 # Copy application files
 echo "📋 Copying application files..."
-# Get the directory where this script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-cp -r $PROJECT_DIR/* $APP_DIR/
+cp -r ./* $APP_DIR/
 
 # Create UV virtual environment
 echo "🐍 Creating UV virtual environment..."
 echo "Using uv for virtual environment management..."
+cd $APP_DIR/server
 uv venv
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-echo "source .venv/bin/activate" > $APP_DIR/activate.sh
+echo "source $APP_DIR/server/.venv/bin/activate" > $APP_DIR/activate.sh
 chmod +x $APP_DIR/activate.sh
 
 # Install Python dependencies
 echo "📦 Installing Python dependencies with UV..."
-cd server
+cd $APP_DIR/server
 echo "Using uv for dependency installation..."
 uv sync
 
