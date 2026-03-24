@@ -278,7 +278,7 @@ def login():
                     return jsonify({'error': 'Invalid username or password'}), 401
 
                 # Create JWT token
-                token_identity = {'id': user['id'], 'username': user['name']}
+                token_identity = str(user['id'])  # JWT identity must be a string (user ID)
                 print(f"Creating JWT with identity: {token_identity}")  # Debug line
                 access_token = create_access_token(identity=token_identity)
                 print(f"JWT token created successfully")  # Debug line
@@ -306,13 +306,16 @@ def get_profile():
         print(f"JWT Identity: {current_user}")  # Debug line
         print(f"JWT Identity type: {type(current_user)}")  # Debug line
 
-        if not current_user or not isinstance(current_user, dict):
+        # JWT identity is now a string (user ID), not a dictionary
+        if not current_user or not isinstance(current_user, str):
             print(f"Invalid JWT identity: {current_user}")
             return jsonify({'error': 'Invalid token'}), 401
 
-        user_id = current_user.get('id')
-        if not user_id:
-            print(f"No user_id in JWT identity: {current_user}")
+        # Convert to integer for database query
+        try:
+            user_id = int(current_user)
+        except (ValueError, TypeError):
+            print(f"Invalid user ID in JWT: {current_user}")
             return jsonify({'error': 'Invalid token structure'}), 401
 
         print(f"User ID extracted: {user_id}")  # Debug line
