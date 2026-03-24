@@ -123,18 +123,13 @@ def get_db_connection():
 # Validation schemas
 class RegistrationSchema(Schema):
     username = fields.Str(required=True, validate=lambda x: 3 <= len(x) <= 12)
-    password = fields.Str(required=True, validate=lambda x: 8 <= len(x) <= 12)
+    password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     confirm_password = fields.Str(required=True)
 
     @validates('username')
     def validate_username(self, value):
         if not re.match(r'^[a-zA-Z0-9_]+$', value):
             raise ValidationError('Username can only contain letters, numbers, and underscores')
-
-    @validates('password')
-    def validate_password(self, value):
-        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)', value):
-            raise ValidationError('Password must contain at least one uppercase letter, one lowercase letter, and one number')
 
     @validates('confirm_password')
     def validate_confirm_password(self, value):
@@ -152,12 +147,7 @@ class ChangePasswordSchema(Schema):
 
     @validates('new_password')
     def validate_new_password(self, value):
-        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)', value):
-            raise ValidationError('Password must contain at least one uppercase letter, one lowercase letter, and one number')
-
-    @validates('confirm_new_password')
-    def validate_confirm_new_password(self, value):
-        if value != self.context.get('new_password'):
+        if value != self.context.get('confirm_new_password'):
             raise ValidationError('New password confirmation does not match')
 
 # Validation helpers
@@ -165,7 +155,7 @@ def validate_username(username):
     return re.match(r'^[a-zA-Z0-9]{3,12}$', username) is not None
 
 def validate_password(password):
-    return re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{5,12}$', password) is not None
+    return re.match(r'^[a-zA-Z0-9@$!%*?&]{5,12}$', password) is not None
 
 def hash_password(password):
     salt = bcrypt.gensalt(rounds=12)

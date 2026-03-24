@@ -29,26 +29,12 @@
             v-model="formData.password"
             type="password"
             maxlength="12"
-            placeholder="Enter password (5-12 chars)"
+            placeholder="Enter password (5-12 characters)"
             :class="{ 'error': errors.password }"
             @blur="validatePassword"
           />
           <span class="char-count">{{ formData.password.length }}/12</span>
           <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
-
-          <!-- Password strength indicator -->
-          <div class="password-strength">
-            <div class="strength-bar">
-              <div
-                class="strength-fill"
-                :class="passwordStrength.class"
-                :style="{ width: passwordStrength.percentage + '%' }"
-              ></div>
-            </div>
-            <span class="strength-text" :class="passwordStrength.class">
-              {{ passwordStrength.text }}
-            </span>
-          </div>
         </div>
 
         <div class="form-group">
@@ -143,12 +129,12 @@ export default {
         return false
       }
 
-      if (username.length < 4 || username.length > 12) {
-        errors.value.username = 'Username must be 4-12 characters'
+      if (username.length < 3 || username.length > 12) {
+        errors.value.username = 'Username must be 3-12 characters'
         return false
       }
 
-      if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      if (!/^[a-zA-Z0-9]+$/.test(username)) {
         errors.value.username = 'Username can only contain letters and numbers'
         return false
       }
@@ -167,11 +153,6 @@ export default {
 
       if (password.length < 5 || password.length > 12) {
         errors.value.password = 'Password must be 5-12 characters'
-        return false
-      }
-
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-        errors.value.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
         return false
       }
 
