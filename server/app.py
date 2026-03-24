@@ -353,8 +353,8 @@ def change_password():
         schema = ChangePasswordSchema(context=request.json)
         data = schema.load(request.json)
 
-        current_password = data['current_password']
-        new_password = data['new_password']
+        current_password = data['currentPassword']
+        new_password = data['newPassword']
 
         # Additional validation for new password
         if not validate_password(new_password):
