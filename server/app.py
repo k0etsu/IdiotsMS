@@ -349,11 +349,11 @@ def change_password():
         user_id = get_jwt_identity()
 
         # Validate input
-        schema = ChangePasswordSchema(context=request.json)
+        schema = ChangePasswordSchema()
         data = schema.load(request.json)
 
-        current_password = data['currentPassword']
-        new_password = data['newPassword']
+        current_password = data['current_password']
+        new_password = data['new_password']
 
         # Additional validation for new password
         if not validate_password(new_password):
