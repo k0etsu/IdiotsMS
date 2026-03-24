@@ -54,18 +54,9 @@ npm run setup-env
 
 Then edit both `.env` files with your configuration.
 
-#### Manual Setup
+#### Environment Variables
 
-**Backend (.env)**
-
-Copy `.env.example` to `.env` in the root directory:
-
-```bash
-cp .env.example .env
-```
-
-Update `.env` with your database configuration:
-
+### Backend (.env) - Remote Server
 ```bash
 # Database Configuration
 DB_HOST=localhost
@@ -79,43 +70,44 @@ JWT_EXPIRES_IN_DAYS=7
 
 # Server Configuration
 PORT=3000
-NODE_ENV=development
-
-# Frontend Configuration (for CORS)
-VITE_PORT=5173
+NODE_ENV=production
 
 # Rate Limiting
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-**Note:** The `VITE_PORT` in the server `.env` should match the `VITE_PORT` in your client `.env` file to ensure proper CORS configuration.
-
-**Frontend (.env)**
-
-Copy `.env.example` to `.env` in the client directory:
-
+### Frontend (.env) - Remote Server
 ```bash
-cp client/.env.example client/.env
+# API Configuration - points to remote server
+VITE_API_BASE_URL=https://your-server.com/api
+VITE_PORT=5173
+
+# Environment settings
+VITE_NODE_ENV=production
 ```
 
-**Important:** The frontend environment variables must match the server configuration from the root `.env` file. Make sure the `VITE_PORT` and `VITE_API_BASE_URL` use the same port as the server's `PORT`.
+**Note:** Copy `.env.example` to `.env` in both root directory and client directory before running the application.
 
-Update `client/.env` to match your server configuration:
+### Local Development Setup
 
+If you want to run the server locally for development, use these settings:
+
+**Backend (.env) - Local Development:**
 ```bash
-# API Configuration - must match server PORT from root .env
-VITE_API_BASE_URL=http://localhost:3000/api
-VITE_PORT=3000
+# Server Configuration
+PORT=5002
+NODE_ENV=development
+```
 
-# Development settings
+**Frontend (.env) - Local Development:**
+```bash
+# API Configuration - points to local server
+VITE_API_BASE_URL=http://localhost:5002/api
+VITE_PORT=5173
+
+# Environment settings
 VITE_NODE_ENV=development
-```
-
-**Example:** If your server `.env` has `PORT=8080`, then your client `.env` should have:
-```bash
-VITE_API_BASE_URL=http://localhost:8080/api
-VITE_PORT=8080
 ```
 
 ### 4. Install Dependencies

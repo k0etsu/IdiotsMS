@@ -36,14 +36,14 @@ app.config['RATELIMIT_STORAGE_URL'] = 'memory://'
 if os.getenv('NODE_ENV') == 'development':
     # In development, allow all origins with explicit CORS middleware
     CORS(app,
-         origins=["*", "https://maplestory.yamanote.co"],
+         origins=["*", "http://localhost:5173"],
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
          methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
          max_age=600)
 else:
     CORS(app,
-         origins=["https://maplestory.yamanote.co"],
+         origins=[os.getenv('PROD_URL', 'https://your-server.com')],
          supports_credentials=True,
          allow_headers=["Content-Type", "Authorization", "X-Requested-With"],
          methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -357,20 +357,6 @@ def change_password():
     except Exception as e:
         print(f"Change password error: {e}")
         return jsonify({'error': 'Internal server error'}), 500
-
-# Test endpoint for debugging CORS
-@app.route('/api/test', methods=['GET', 'OPTIONS'])
-def test_cors():
-    if request.method == 'OPTIONS':
-        response = jsonify({'message': 'CORS preflight successful'})
-    else:
-        response = jsonify({'message': 'CORS test successful', 'origin': request.headers.get('Origin')})
-
-    # Add CORS headers manually for debugging
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-    return response
 
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 3000))
