@@ -40,18 +40,19 @@ allowed_origins = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5173',
-    'http://127.0.0.1:5173'
+    'http://127.0.0.1:5173',
+    'http://localhost:5002',
+    'http://127.0.0.1:5002'
 ]
 
-# In development, allow all localhost origins for flexibility
 if os.getenv('NODE_ENV') == 'development':
-    # Allow any localhost or 127.0.0.1 port in development
-    allowed_origins.append(r'http://localhost:*')
-    allowed_origins.append(r'http://127.0.0.1:*')
+    # In development, allow all localhost origins
+    CORS(app, origins="*", supports_credentials=True)
 elif os.getenv('NODE_ENV') == 'production':
     allowed_origins = ['https://maplestory.yamanote.co']
-
-CORS(app, origins=allowed_origins, supports_credentials=True)
+    CORS(app, origins=allowed_origins, supports_credentials=True)
+else:
+    CORS(app, origins=allowed_origins, supports_credentials=True)
 
 jwt_manager = JWTManager(app)
 
