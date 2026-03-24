@@ -78,6 +78,22 @@ def after_request(response):
 
 jwt_manager = JWTManager(app)
 
+# JWT error handler
+@jwt_manager.expired_token_loader
+def expired_token_callback(jwt_header, jwt_payload):
+    print(f"JWT expired: {jwt_payload}")
+    return jsonify({'error': 'Token has expired'}), 401
+
+@jwt_manager.invalid_token_loader
+def invalid_token_callback(error):
+    print(f"JWT invalid: {error}")
+    return jsonify({'error': 'Invalid token'}), 401
+
+@jwt_manager.unauthorized_loader
+def missing_token_callback(error):
+    print(f"JWT missing: {error}")
+    return jsonify({'error': 'Authorization token is required'}), 401
+
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
@@ -288,6 +304,7 @@ def get_profile():
     try:
         current_user = get_jwt_identity()
         print(f"JWT Identity: {current_user}")  # Debug line
+        print(f"JWT Identity type: {type(current_user)}")  # Debug line
 
         if not current_user or not isinstance(current_user, dict):
             print(f"Invalid JWT identity: {current_user}")
@@ -298,6 +315,7 @@ def get_profile():
             print(f"No user_id in JWT identity: {current_user}")
             return jsonify({'error': 'Invalid token structure'}), 401
 
+        print(f"User ID extracted: {user_id}")  # Debug line
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
@@ -306,6 +324,7 @@ def get_profile():
                     (user_id,)
                 )
                 user = cursor.fetchone()
+                print(f"Database user found: {user}")  # Debug line
 
                 if not user:
                     return jsonify({'error': 'User not found'}), 404
@@ -317,12 +336,10 @@ def get_profile():
 
     except Exception as e:
         print(f"Profile error: {e}")
+        print(f"Error type: {type(e)}")  # Debug line
+        import traceback
+        print(f"Full traceback: {traceback.format_exc()}")  # Debug line
         return jsonify({'error': 'Internal server error'}), 500
-
-# Debug route to catch all requests
-@app.route('/api/debug', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def debug_request():
-    print(f"Debug - Method: {request.method}")
     print(f"Debug - Headers: {dict(request.headers)}")
     print(f"Debug - URL: {request.url}")
     return jsonify({
