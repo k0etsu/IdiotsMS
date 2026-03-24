@@ -126,11 +126,6 @@ class RegistrationSchema(Schema):
     password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     confirm_password = fields.Str(required=True)
 
-    @validates('username')
-    def validate_username(self, value):
-        if not re.match(r'^[a-zA-Z0-9_]+$', value):
-            raise ValidationError('Username can only contain letters, numbers, and underscores')
-
     @validates('confirm_password')
     def validate_confirm_password(self, value, data):
         if value != data.get('password'):
@@ -196,9 +191,7 @@ def register():
             return jsonify({'error': 'Username can only contain letters and numbers'}), 400
 
         if not validate_password(password):
-            return jsonify({
-                'error': 'Password must be 5-12 characters with at least one uppercase letter, one lowercase letter, and one number'
-            }), 400
+            return jsonify({'error': 'Password must be 5-12 characters'}), 400
 
         # Check if username already exists
         conn = get_db_connection()
