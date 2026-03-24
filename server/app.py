@@ -194,7 +194,7 @@ def register():
         conn = get_db_connection()
         try:
             with conn.cursor() as cursor:
-                cursor.execute("SELECT id FROM accounts WHERE username = %s", (username))
+                cursor.execute("SELECT id FROM accounts WHERE name = %s", (username))
                 existing_user = cursor.fetchone()
 
                 if existing_user:
@@ -203,7 +203,7 @@ def register():
                 # Hash password and create account
                 hashed_password = hash_password(password)
                 cursor.execute(
-                    "INSERT INTO accounts (username, password, createdat) VALUES (%s, %s, NOW())",
+                    "INSERT INTO accounts (name, password, createdat) VALUES (%s, %s, NOW())",
                     (username, hashed_password)
                 )
                 user_id = cursor.lastrowid
@@ -244,7 +244,7 @@ def login():
         try:
             with conn.cursor() as cursor:
                 cursor.execute(
-                    "SELECT id, username, password FROM accounts WHERE username = %s",
+                    "SELECT id, name, password FROM accounts WHERE name = %s",
                     (username,)
                 )
                 user = cursor.fetchone()
