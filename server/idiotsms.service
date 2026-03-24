@@ -8,9 +8,9 @@ User=www-data
 Group=www-data
 RuntimeDirectory=idiotsms
 WorkingDirectory=/opt/idiotsms
-Environment=PATH=/opt/idiotsms/venv/bin
+Environment=PATH=/opt/idiotsms/.venv/bin
 EnvironmentFile=/opt/idiotsms/.env
-ExecStart=/opt/idiotsms/venv/bin/gunicorn --config gunicorn.conf.py app:app
+ExecStart=/opt/idiotsms/.venv/bin/gunicorn --config gunicorn.conf.py app:app
 ExecReload=/bin/kill -s HUP $MAINPID
 KillMode=mixed
 TimeoutStopSec=5

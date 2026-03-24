@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # IdiotsMS Production Deployment Script
-# This script sets up the IdiotsMS application for production deployment with Gunicorn and systemd
+# This script sets up the IdiotsMS application using UV for package and venv management
 
 set -e
 
@@ -10,10 +10,9 @@ APP_NAME="idiotsms"
 APP_USER="www-data"
 APP_GROUP="www-data"
 APP_DIR="/opt/idiotsms"
-VENV_DIR="$APP_DIR/venv"
 SERVICE_NAME="idiotsms"
 
-echo "🚀 Deploying IdiotsMS to production..."
+echo "🚀 Deploying IdiotsMS to production with UV..."
 
 # Check if running as root
 if [[ $EUID -ne 0 ]]; then
@@ -28,18 +27,24 @@ cd $APP_DIR
 
 # Copy application files
 echo "📋 Copying application files..."
-# Assume this script is run from the project directory
+# Assume this script is run from project directory
 cp -r ./* $APP_DIR/
 
-# Create virtual environment
-echo "🐍 Creating Python virtual environment..."
-python3 -m venv $VENV_DIR
-source $VENV_DIR/bin/activate
+# Create UV virtual environment
+echo "🐍 Creating UV virtual environment..."
+echo "Using uv for virtual environment management..."
+uv venv
+
+# Activate virtual environment
+echo "Activating virtual environment..."
+echo "source .venv/bin/activate" > $APP_DIR/activate.sh
+chmod +x $APP_DIR/activate.sh
 
 # Install Python dependencies
-echo "📦 Installing Python dependencies..."
-cd $APP_DIR/server
-pip install -r requirements.txt
+echo "📦 Installing Python dependencies with UV..."
+cd server
+echo "Using uv for dependency installation..."
+uv sync
 
 # Set permissions
 echo "🔒 Setting permissions..."
@@ -80,18 +85,27 @@ EOF
 chown $APP_USER:$APP_GROUP $APP_DIR/.env
 chmod 600 $APP_DIR/.env
 
-echo "✅ Deployment completed!"
+echo "✅ UV Deployment completed!"
 echo ""
 echo "📋 Next steps:"
 echo "1. Update $APP_DIR/.env with your actual database credentials"
-echo "2. Start the service: systemctl start $SERVICE_NAME"
+echo "2. Start service: systemctl start $SERVICE_NAME"
 echo "3. Check status: systemctl status $SERVICE_NAME"
 echo "4. View logs: journalctl -u $SERVICE_NAME -f"
 echo ""
-echo "🔧 Management commands:"
+echo "🧧 Management commands:"
 echo "  Start: systemctl start $SERVICE_NAME"
 echo "  Stop: systemctl stop $SERVICE_NAME"
 echo "  Restart: systemctl restart $SERVICE_NAME"
 echo "  Status: systemctl status $SERVICE_NAME"
 echo "  Logs: journalctl -u $SERVICE_NAME -f"
 echo "  Reload: systemctl reload $SERVICE_NAME"
+echo ""
+echo "🔧 UV-specific commands:"
+echo "  Update deps: cd $APP_DIR/server && uv sync"
+echo "  Add package: cd $APP_DIR/server && uv add package-name"
+echo "  Remove package: cd $APP_DIR/server && uv remove package-name"
+echo "  Lock deps: cd $APP_DIR/server && uv lock"
+echo "  Activate: source $APP_DIR/activate.sh"
+echo ""
+echo "🌐 Deployment URL: http://$(hostname -I):${PORT:-3000}"

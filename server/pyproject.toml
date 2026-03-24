@@ -8,7 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "flask>=2.3.3",
+    "flask>=3.0.0",
     "flask-cors>=4.0.0",
     "flask-jwt-extended>=4.5.3",
     "pymysql>=1.1.0",
@@ -17,6 +17,7 @@ dependencies = [
     "flask-limiter>=3.5.0",
     "marshmallow>=3.20.1",
     "email-validator>=2.0.0",
+    "gunicorn>=21.2.0",
 ]
 
 [project.optional-dependencies]

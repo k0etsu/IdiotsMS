@@ -39,7 +39,7 @@ limit_request_field_size = 8190
 # keyfile = '/path/to/ssl/key.pem'
 # certfile = '/path/to/ssl/cert.pem'
 
-# Raw environment
+# UV environment
 raw_env = [
     ('PORT', os.getenv('PORT', '3000')),
     ('NODE_ENV', os.getenv('NODE_ENV', 'production')),

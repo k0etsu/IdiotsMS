@@ -5,20 +5,21 @@ This guide covers deploying IdiotsMS to production using Gunicorn and systemd.
 ## 📋 Prerequisites
 
 - Ubuntu 20.04+ or CentOS 8+
-- Python 3.8+
+- Python 3.12+
+- UV installed (for modern Python package management)
 - MySQL 8.0+
 - Root access to server
 - Domain name (e.g., maplestory.yamanote.co)
 
 ## 🚀 Quick Deployment
 
-1. **Clone the repository:**
+1. **Clone repository:**
    ```bash
    git clone <repository-url>
    cd idiots-ms
    ```
 
-2. **Run the deployment script:**
+2. **Run deployment script:**
    ```bash
    sudo chmod +x server/deploy.sh
    sudo server/deploy.sh
@@ -45,15 +46,25 @@ sudo cp -r ./* /opt/idiotsms/
 cd /opt/idiotsms
 ```
 
-### 2. Create Virtual Environment
+### 2. Install UV (if not present)
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-cd server
-pip install -r requirements.txt
+# Install UV for modern Python package management
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 3. Configure Environment
+### 3. Create UV Virtual Environment
+```bash
+# Use UV for virtual environment management
+uv venv
+```
+
+### 4. Install Dependencies with UV
+```bash
+cd server
+uv sync  # Uses pyproject.toml for dependency resolution
+```
+
+### 5. Configure Environment
 ```bash
 sudo nano .env
 ```
@@ -79,14 +90,14 @@ RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-### 4. Setup Systemd Service
+### 6. Setup Systemd Service
 ```bash
 sudo cp idiotsms.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable idiotsms
 ```
 
-### 5. Start Service
+### 7. Start Service
 ```bash
 sudo systemctl start idiotsms
 sudo systemctl status idiotsms
@@ -197,9 +208,9 @@ sudo tail -f /var/log/nginx/error.log
 cd /opt/idiotsms
 sudo systemctl stop idiotsms
 git pull origin main
-source venv/bin/activate
+source .venv/bin/activate
 cd server
-pip install -r requirements.txt
+uv sync
 sudo systemctl start idiotsms
 ```
 
@@ -230,6 +241,18 @@ sudo systemctl start idiotsms
    sudo chmod -R 755 /opt/idiotsms
    ```
 
+5. **UV Issues:**
+   ```bash
+   # Check UV installation
+   uv --version
+
+   # Clear UV cache
+   uv cache clean
+
+   # Force reinstall dependencies
+   uv sync --reinstall
+   ```
+
 ## 🔐 Security Recommendations
 
 1. **Firewall configuration:**
@@ -250,3 +273,17 @@ sudo systemctl start idiotsms
    - Use HTTPS in production
    - Regularly update dependencies
    - Monitor logs for suspicious activity
+
+## 🌐 UV-Specific Benefits
+
+### Performance
+- **10-100x faster** dependency installation vs pip
+- **Parallel downloads** - Multiple packages simultaneously
+- **Intelligent caching** - Faster subsequent operations
+- **Deterministic builds** - Reproducible environments
+
+### Modern Development
+- **Uses pyproject.toml** - Modern Python packaging standard
+- **UV virtual environment** - Better than traditional venv
+- **Lock files** - Reproducible dependency trees
+- **Modern tooling** - Latest Python ecosystem tools
