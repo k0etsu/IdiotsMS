@@ -7,13 +7,16 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && uv run run.py",
     "server-prod": "cd server && uv run app.py",
+    "server-gunicorn": "cd server && gunicorn --config gunicorn.conf.py app:app",
     "client": "cd client && npm run dev",
     "build": "cd client && npm run build",
     "start": "npm run server-prod",
+    "start-prod": "npm run server-gunicorn",
     "install-deps": "cd server && uv sync && cd ../client && npm install",
     "install-python": "cd server && uv sync",
     "install-client": "cd client && npm install",
-    "setup-env": "cp .env.example .env && cp client/.env.example client/.env"
+    "setup-env": "cp .env.example .env && cp client/.env.example client/.env",
+    "deploy": "chmod +x server/deploy.sh && sudo server/deploy.sh"
   },
   "dependencies": {},
   "devDependencies": {
