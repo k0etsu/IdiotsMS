@@ -32,27 +32,19 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=int(os.getenv('JWT_EXPIR
 app.config['RATELIMIT_STORAGE_URL'] = 'memory://'
 
 # Initialize extensions
-# Get the frontend port from environment or default to common dev ports
-frontend_port = os.getenv('VITE_PORT', '5173')
-allowed_origins = [
-    f'http://localhost:{frontend_port}',
-    f'http://127.0.0.1:{frontend_port}',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:5002',
-    'http://127.0.0.1:5002'
-]
-
+# Simple CORS configuration for development
 if os.getenv('NODE_ENV') == 'development':
-    # In development, allow all localhost origins
-    CORS(app, origins="*", supports_credentials=True)
-elif os.getenv('NODE_ENV') == 'production':
-    allowed_origins = ['https://maplestory.yamanote.co']
-    CORS(app, origins=allowed_origins, supports_credentials=True)
+    CORS(app,
+         origins=["*"],
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 else:
-    CORS(app, origins=allowed_origins, supports_credentials=True)
+    CORS(app,
+         origins=["https://maplestory.yamanote.co"],
+         supports_credentials=True,
+         allow_headers=["Content-Type", "Authorization"],
+         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 jwt_manager = JWTManager(app)
 
@@ -336,7 +328,25 @@ def change_password():
         print(f"Change password error: {e}")
         return jsonify({'error': 'Internal server error'}), 500
 
+# Test endpoint for debugging CORS
+@app.route('/api/test', methods=['GET', 'OPTIONS'])
+def test_cors():
+    if request.method == 'OPTIONS':
+        response = jsonify({'message': 'CORS preflight successful'})
+    else:
+        response = jsonify({'message': 'CORS test successful', 'origin': request.headers.get('Origin')})
+
+    # Add CORS headers manually for debugging
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+    return response
+
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 3000))
     debug = os.getenv('NODE_ENV') == 'development'
+    print(f"Starting Flask server on port {port}")
+    print(f"Debug mode: {debug}")
+    print(f"Environment: {os.getenv('NODE_ENV', 'development')}")
+    print(f"CORS enabled: {os.getenv('NODE_ENV') == 'development'}")
     app.run(host='0.0.0.0', port=port, debug=debug)
