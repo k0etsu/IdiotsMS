@@ -23,7 +23,7 @@ class Config:
     RATELIMIT_DEFAULT = f"{os.getenv('RATE_LIMIT_MAX_REQUESTS', '100')}/{int(os.getenv('RATE_LIMIT_WINDOW_MS', '900000'))//1000} seconds"
 
     # CORS
-    CORS_ORIGINS = ['http://localhost:5173', 'http://localhost:3000'] if os.getenv('NODE_ENV') != 'production' else ['https://yourdomain.com']
+    CORS_ORIGINS = ['http://localhost:5173', 'http://localhost:3000'] if os.getenv('NODE_ENV') != 'production' else ['https://maplestory.yamanote.co']
 
 class DevelopmentConfig(Config):
     """Development configuration"""
