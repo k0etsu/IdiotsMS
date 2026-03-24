@@ -213,9 +213,8 @@ def register():
                 conn.commit()
 
                 # Create JWT token
-                access_token = create_access_token(
-                    identity={'id': user_id, 'username': username}
-                )
+                token_identity = str(user_id)  # JWT identity must be a string
+                access_token = create_access_token(identity=token_identity)
 
                 return jsonify({
                     'message': 'Account created successfully',
