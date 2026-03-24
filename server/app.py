@@ -124,9 +124,9 @@ def get_db_connection():
 class RegistrationSchema(Schema):
     username = fields.Str(required=True, validate=lambda x: 3 <= len(x) <= 12)
     password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
-    confirm_password = fields.Str(required=True)
+    confirmPassword = fields.Str(required=True)
 
-    @validates('confirm_password')
+    @validates('confirmPassword')
     def validate_confirm_password(self, value, data):
         if value != data.get('password'):
             raise ValidationError('Password confirmation does not match')
