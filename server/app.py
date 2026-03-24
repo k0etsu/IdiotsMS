@@ -253,9 +253,10 @@ def login():
                     return jsonify({'error': 'Invalid username or password'}), 401
 
                 # Create JWT token
-                access_token = create_access_token(
-                    identity={'id': user['id'], 'username': user['name']}
-                )
+                token_identity = {'id': user['id'], 'username': user['name']}
+                print(f"Creating JWT with identity: {token_identity}")  # Debug line
+                access_token = create_access_token(identity=token_identity)
+                print(f"JWT token created successfully")  # Debug line
 
                 return jsonify({
                     'message': 'Login successful',
@@ -277,7 +278,16 @@ def login():
 def get_profile():
     try:
         current_user = get_jwt_identity()
-        user_id = current_user['id']
+        print(f"JWT Identity: {current_user}")  # Debug line
+
+        if not current_user or not isinstance(current_user, dict):
+            print(f"Invalid JWT identity: {current_user}")
+            return jsonify({'error': 'Invalid token'}), 401
+
+        user_id = current_user.get('id')
+        if not user_id:
+            print(f"No user_id in JWT identity: {current_user}")
+            return jsonify({'error': 'Invalid token structure'}), 401
 
         conn = get_db_connection()
         try:
