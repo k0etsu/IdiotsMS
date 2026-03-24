@@ -81,10 +81,15 @@ JWT_EXPIRES_IN_DAYS=7
 PORT=3000
 NODE_ENV=development
 
+# Frontend Configuration (for CORS)
+VITE_PORT=5173
+
 # Rate Limiting
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
+
+**Note:** The `VITE_PORT` in the server `.env` should match the `VITE_PORT` in your client `.env` file to ensure proper CORS configuration.
 
 **Frontend (.env)**
 

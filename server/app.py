@@ -32,9 +32,26 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=int(os.getenv('JWT_EXPIR
 app.config['RATELIMIT_STORAGE_URL'] = 'memory://'
 
 # Initialize extensions
-CORS(app,
-     origins=['http://localhost:5173', 'http://localhost:3000'] if os.getenv('NODE_ENV') != 'production' else ['https://yourdomain.com'],
-     supports_credentials=True)
+# Get the frontend port from environment or default to common dev ports
+frontend_port = os.getenv('VITE_PORT', '5173')
+allowed_origins = [
+    f'http://localhost:{frontend_port}',
+    f'http://127.0.0.1:{frontend_port}',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173'
+]
+
+# In development, allow all localhost origins for flexibility
+if os.getenv('NODE_ENV') == 'development':
+    # Allow any localhost or 127.0.0.1 port in development
+    allowed_origins.append(r'http://localhost:*')
+    allowed_origins.append(r'http://127.0.0.1:*')
+elif os.getenv('NODE_ENV') == 'production':
+    allowed_origins = ['https://maplestory.yamanote.co']
+
+CORS(app, origins=allowed_origins, supports_credentials=True)
 
 jwt_manager = JWTManager(app)
 
