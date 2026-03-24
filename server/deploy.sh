@@ -32,7 +32,7 @@ cp -r ./* $APP_DIR/
 echo "🐍 Creating UV virtual environment..."
 if ! command -v uv &> /dev/null; then
     echo "uv is not installed. Installing..."
-    sudo pip install uv
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 echo "Using uv for virtual environment management..."
 cd $APP_DIR/server
