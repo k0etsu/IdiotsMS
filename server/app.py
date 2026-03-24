@@ -117,12 +117,12 @@ class RegistrationSchema(Schema):
             raise ValidationError('Password confirmation does not match')
 
 class LoginSchema(Schema):
-    username = fields.Str(required=True, validate=lambda x: 3 <= len(x) <= 12)
-    password = fields.Str(required=True, validate=lambda x: 8 <= len(x) <= 12)
+    username = fields.Str(required=True, validate=lambda x: 4 <= len(x) <= 12)
+    password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
 
 class ChangePasswordSchema(Schema):
-    current_password = fields.Str(required=True, validate=lambda x: 8 <= len(x) <= 12)
-    new_password = fields.Str(required=True, validate=lambda x: 8 <= len(x) <= 12)
+    current_password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
+    new_password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     confirm_new_password = fields.Str(required=True)
 
     @validates('new_password')
@@ -245,7 +245,7 @@ def login():
             with conn.cursor() as cursor:
                 cursor.execute(
                     "SELECT id, name, password FROM accounts WHERE name = %s",
-                    (username,)
+                    (username)
                 )
                 user = cursor.fetchone()
 
@@ -254,13 +254,13 @@ def login():
 
                 # Create JWT token
                 access_token = create_access_token(
-                    identity={'id': user['id'], 'username': user['username']}
+                    identity={'id': user['id'], 'username': user['name']}
                 )
 
                 return jsonify({
                     'message': 'Login successful',
                     'token': access_token,
-                    'user': {'id': user['id'], 'username': user['username']}
+                    'user': {'id': user['id'], 'username': user['name']}
                 })
 
         finally:
