@@ -141,13 +141,13 @@ class LoginSchema(Schema):
     password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
 
 class ChangePasswordSchema(Schema):
-    current_password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
-    new_password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
-    confirm_new_password = fields.Str(required=True)
+    currentPassword = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
+    newPassword = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
+    confirmNewPassword = fields.Str(required=True)
 
-    @validates('new_password')
-    def validate_new_password(self, value):
-        if value != self.context.get('confirm_new_password'):
+    @validates('newPassword')
+    def validate_newPassword(self, value):
+        if value != self.context.get('confirmNewPassword'):
             raise ValidationError('New password confirmation does not match')
 
 # Validation helpers
@@ -352,8 +352,8 @@ def change_password():
         schema = ChangePasswordSchema()
         data = schema.load(request.json)
 
-        current_password = data['current_password']
-        new_password = data['new_password']
+        current_password = data['currentPassword']
+        new_password = data['newPassword']
 
         # Additional validation for new password
         if not validate_password(new_password):
