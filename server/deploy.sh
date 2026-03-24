@@ -27,8 +27,10 @@ cd $APP_DIR
 
 # Copy application files
 echo "📋 Copying application files..."
-# Assume this script is run from project directory
-cp -r ./* $APP_DIR/
+# Get the directory where this script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+cp -r $PROJECT_DIR/* $APP_DIR/
 
 # Create UV virtual environment
 echo "🐍 Creating UV virtual environment..."
