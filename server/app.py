@@ -126,11 +126,6 @@ class RegistrationSchema(Schema):
     password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
     confirmPassword = fields.Str(required=True)
 
-    @validates('confirmPassword')
-    def validate_confirm_password(self, value, data):
-        if value != data.get('password'):
-            raise ValidationError('Password confirmation does not match')
-
 class LoginSchema(Schema):
     username = fields.Str(required=True, validate=lambda x: 4 <= len(x) <= 12)
     password = fields.Str(required=True, validate=lambda x: 5 <= len(x) <= 12)
@@ -185,6 +180,7 @@ def register():
 
         username = data['username'].strip()
         password = data['password']
+        confirm_password = data['confirmPassword']
 
         # Additional validation
         if not validate_username(username):
@@ -192,6 +188,10 @@ def register():
 
         if not validate_password(password):
             return jsonify({'error': 'Password must be 5-12 characters'}), 400
+
+        # Check if passwords match
+        if password != confirm_password:
+            return jsonify({'error': 'Password confirmation does not match'}), 400
 
         # Check if username already exists
         conn = get_db_connection()
