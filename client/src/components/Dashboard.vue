@@ -45,7 +45,6 @@
               <span class="char-count">{{ passwordForm.currentPassword.length }}/12</span>
               <span v-if="errors.currentPassword" class="error-message">{{ errors.currentPassword }}</span>
             </div>
-
             <div class="form-group">
               <label for="newPassword">New Password</label>
               <input
@@ -59,22 +58,7 @@
               />
               <span class="char-count">{{ passwordForm.newPassword.length }}/12</span>
               <span v-if="errors.newPassword" class="error-message">{{ errors.newPassword }}</span>
-
-              <!-- Password strength indicator -->
-              <div class="password-strength">
-                <div class="strength-bar">
-                  <div
-                    class="strength-fill"
-                    :class="passwordStrength.class"
-                    :style="{ width: passwordStrength.percentage + '%' }"
-                  ></div>
-                </div>
-                <span class="strength-text" :class="passwordStrength.class">
-                  {{ passwordStrength.text }}
-                </span>
-              </div>
             </div>
-
             <div class="form-group">
               <label for="confirmNewPassword">Confirm New Password</label>
               <input
@@ -212,11 +196,6 @@ export default {
 
       if (password.length < 5 || password.length > 12) {
         errors.value.newPassword = 'Password must be 5-12 characters'
-        return false
-      }
-
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-        errors.value.newPassword = 'Password must contain at least one uppercase letter, one lowercase letter, and one number'
         return false
       }
 
